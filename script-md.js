@@ -92,6 +92,11 @@ function inputNb(nombre) {
   if(document.querySelector('.inpt').value == 0) {
     document.querySelector('.inpt').value = nombre;
   }
+  else if(nombre == '.') {
+    if(!document.querySelector('.inpt').value.includes('.')) {
+      document.querySelector('.inpt').value = document.querySelector('.inpt').value + nombre;
+    }
+  }
   else {
     document.querySelector('.inpt').value = document.querySelector('.inpt').value + nombre;
   }
