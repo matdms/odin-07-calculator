@@ -2,8 +2,8 @@
 
 /* TODO JS
 
-l'historique dépasse ud conteneur
-il faudrait un compteur d'historique pour supprimer les plus vieux paragraphes de l'histo
+multiple decimal : ne marche pas pour b si a contient déjà un point.
+backspace to be implemented
 
 */
 
@@ -16,6 +16,13 @@ let nbHisto = 0;
 let operande = 0; //0 ou 1 pour savoir si on entre le 1er ou le 2eme membre de l'operation
 
 let operateur = '+';
+let longueur = 0; //permet de slicer a et b pour trouver la valeur de b
+
+// touches autorisées : 
+let touchesNum = ['0','1','2','3','4','5','6','7','8','9','.'];
+let touchesOper = ['+','-','*','/','Enter'];
+let touchesOption = ['Escape', 'Backspace'];
+
 
 // FONCTIONS
 function add(a, b) {
@@ -65,11 +72,6 @@ function operate(operator, a, b) {
 
 // MAIN
 
-/*console.log(a + ' + ' + b + ' = ' + operate('+', a, b));
-console.log(a + ' - ' + b + ' = ' + operate('-', a, b));
-console.log(a + ' * ' + b + ' = ' + operate('*', a, b));
-console.log(a + ' / ' + b + ' = ' + operate('/', a, b));*/
-
 function btnClick(bouton) {
   console.log(bouton.textContent);
   let btnClass = Array.from(bouton.classList);
@@ -93,7 +95,7 @@ function inputNb(nombre) {
     document.querySelector('.inpt').value = nombre;
   }
   else if(nombre == '.') {
-    if(!document.querySelector('.inpt').value.includes('.')) {
+    if(!document.querySelector('.inpt').value.includes('.') || !Number.isInteger(a)) {
       document.querySelector('.inpt').value = document.querySelector('.inpt').value + nombre;
     }
   }
@@ -105,12 +107,13 @@ function inputNb(nombre) {
 
 function operation(operator) {
   if( (operande == 1) && (operator == '=') ) {
-    b = parseFloat(document.querySelector('.inpt').value);
+    operande = 2;
+    b = parseFloat(document.querySelector('.inpt').value.slice(longueur));
     resultat = operate(operateur, a, b);
     document.querySelector('.inpt').value = resultat;
-    console.log(b);
-    console.log(resultat);
-    console.log(a + ' ' + operateur + ' ' + b + ' = ' + resultat);
+    //console.log(b);
+    //console.log(resultat);
+    //console.log(a + ' ' + operateur + ' ' + b + ' = ' + resultat);
     ajouteHisto(a + ' ' + operateur + ' ' + b + ' = ' + resultat);
   }
   else if( (operande == 0) && (operator != '=') ) {
@@ -120,9 +123,11 @@ function operation(operator) {
     }
     else operateur = operator;
     a = parseFloat(document.querySelector('.inpt').value);
-    document.querySelector('.inpt').value = 0;
-    console.log(a);
-    console.log(operateur);
+    document.querySelector('.inpt').value = a + ' ' + operateur + ' ';
+    longueur = document.querySelector('.inpt').value.length;
+    //console.log(longueur);
+    //console.log(a);
+    //console.log(operateur);
   }
 }
 
@@ -132,7 +137,11 @@ function setting(option) {
     b = 0;
     operateur = '+';
     operande = 0;
+    longueur = 0;
     document.querySelector('.inpt').value = 0;
+  }
+  else if(option == 'Backspace') {
+
   }
 }
 
@@ -151,9 +160,35 @@ function ajouteHisto(uneOperation) {
   }
 }
 
+
+// EVENT LISENERS
+
 const keys = document.querySelector('.keys');
 keys.addEventListener('click', (e) => {
   //btnClick(e.target.textContent);
   //btnClick(e.target.classList);
   btnClick(e.target);
+});
+
+document.addEventListener('keydown', (event) => {
+  let nomTouche = event.key;
+  console.log(nomTouche);
+  if(touchesNum.includes(nomTouche)) {
+    inputNb(nomTouche);
+  }
+  else if(touchesOper.includes(nomTouche)) {
+    if(nomTouche == 'Enter') {
+      nomTouche = '=';
+    }
+    else if(nomTouche == '*') {
+      nomTouche = 'x';
+    }
+    operation(nomTouche);
+  }
+  else if(touchesOption.includes(nomTouche)) {
+    if(nomTouche == 'Escape') {
+      nomTouche = 'AC';
+    }
+    setting(nomTouche);
+  }
 });
