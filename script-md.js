@@ -1,8 +1,9 @@
 // Calculator js script
 
 /* TODO JS
+bug : entrer ".01" ne fonctionne pas, car quand on tape le "1", a vaut tjrs 0, et donc ca réinitialise...
+      a creuser
 
-multiple decimal : ne marche pas pour b si a contient déjà un point.
 backspace to be implemented
 
 */
@@ -12,11 +13,10 @@ let oper = ['+', '-', '*', '/'];
 let a = 0;
 let b = 0;
 let nbHisto = 0;
-
 let operande = 0; //0 ou 1 pour savoir si on entre le 1er ou le 2eme membre de l'operation
-
 let operateur = '+';
 let longueur = 0; //permet de slicer a et b pour trouver la valeur de b
+let newOp = 0;
 
 // touches autorisées : 
 let touchesNum = ['0','1','2','3','4','5','6','7','8','9','.'];
@@ -91,7 +91,8 @@ function btnClick(bouton) {
 }
 
 function inputNb(nombre) {
-  if(document.querySelector('.inpt').value == 0) {
+  
+  if(document.querySelector('.inpt').value == 0 && newOp == 0) {
     document.querySelector('.inpt').value = nombre;
   }
   else if(nombre == '.') {
@@ -102,7 +103,7 @@ function inputNb(nombre) {
   else {
     document.querySelector('.inpt').value = document.querySelector('.inpt').value + nombre;
   }
-
+  newOp++;
 }
 
 function operation(operator) {
@@ -138,6 +139,7 @@ function setting(option) {
     operateur = '+';
     operande = 0;
     longueur = 0;
+    newOp = 0;
     document.querySelector('.inpt').value = 0;
   }
   else if(option == 'Backspace') {
@@ -172,7 +174,8 @@ keys.addEventListener('click', (e) => {
 
 document.addEventListener('keydown', (event) => {
   let nomTouche = event.key;
-  console.log(nomTouche);
+  
+  //console.log(nomTouche);
   if(touchesNum.includes(nomTouche)) {
     inputNb(nomTouche);
   }
